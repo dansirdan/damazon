@@ -25,7 +25,6 @@ function displayAvailable() {
   connection.query(`SELECT * FROM products`, function (err, res) {
 
     if (err) throw err;
-    // console.log(res);
 
     for (let i = 0; i < res.length; i++) {
       console.log(`ID: ${res[i].id}`)
@@ -33,8 +32,9 @@ function displayAvailable() {
       console.log(`Price: $${res[i].price}`)
       console.log(divider);
     }
-    // connection.end();
+
     pick_id();
+
   });
 };
 
@@ -50,14 +50,19 @@ function pick_id() {
   }]).then(function (res) {
 
     let check_id = res.id;
+
     if (Number.isInteger(check_id)) {
+
       console.log(`Please enter a valid ID number...`);
       pick_id();
+
     } else {
+
       pick_amount(check_id);
-    }
-  })
-}
+
+    };
+  });
+};
 
 function pick_amount(check_id) {
 
@@ -68,43 +73,53 @@ function pick_amount(check_id) {
     message: `How many would you like to buy?`,
     name: "amount"
   }]).then(function (res) {
+
     let product_amount = res.amount;
+
     if (Number.isInteger(product_amount)) {
+
       console.log(`Please enter a valid amount...`);
+
     } else {
+
       makeSale(product_id, product_amount);
-    }
-  })
-}
+
+    };
+  });
+};
 
 function makeSale(product_id, product_amount) {
-  console.log(`Processing your sale...`)
+  console.log(`\n\nProcessing your sale...`)
 
-  connection.query(`SELECT stock_quantity FROM products WHERE id = ${product_id}`, function (err, res) {
+  connection.query(`SELECT * FROM products WHERE id = ${product_id}`, function (err, res) {
 
     if (err) throw err;
-    // console.log(res[0].stock_quantity);
     let stock = res[0].stock_quantity;
+    let productName = res[0].product_name;
+    let productPrice = res[0].price;
 
+    if (stock <= 0) {
+      console.log(`\n\nUnfortunately, we are out of ${productName}\n\n`)
+      console.log(`Please enter another Product ID...`)
+      pick_id();
+    } else {
 
-    var query = connection.query(
-      "UPDATE products SET ? WHERE ?",
-      [{
-          stock_quantity: stock - product_amount
-        },
-        {
-          id: product_id
-        }
-      ],
-      function (err, res) {
-        if (err) throw err;
-        console.log(`${res.affectedRows} products update!\n`)
-        displayAvailable();
-      }
-    )
-
-    console.log(query.sql);
+      var query = connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [{
+            stock_quantity: stock - product_amount
+          },
+          {
+            id: product_id
+          }
+        ],
+        function (err, res) {
+          if (err) throw err;
+          console.log(`Total Sale: $${productPrice*product_amount}`);
+          console.log(`${res.affectedRows} products updated!\n`);
+          pick_id();
+        });
+    }
+    // console.log(query.sql);
   });
-
-
-}
+};

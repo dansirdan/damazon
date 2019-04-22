@@ -1,0 +1,10 @@
+Green Towel       || ID: 1   || Price: $13       || Stock: 16
+J&J Shampoo       || ID: 2   || Price: $5.25     || Stock: 38
+Toilet Paper      || ID: 3   || Price: $15       || Stock: 15
+17 in Monitor     || ID: 4   || Price: $96       || Stock: 10
+Zune MP3 Player   || ID: 5   || Price: $217.15   || Stock: 4
+Alienware Desktop || ID: 6   || Price: $2999.99  || Stock: 22
+Red Dress         || ID: 7   || Price: $53       || Stock: 10
+Swim Trunks       || ID: 8   || Price: $34.99    || Stock: 7
+Green Dress       || ID: 9   || Price: $53       || Stock: 7
+Birthday Suit     || ID: 10  || Price: $800      || Stock: 8
