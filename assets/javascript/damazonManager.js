@@ -132,12 +132,39 @@ function aInv() {
 
 function aPro() {
 
-  // create Item
-  // REFERENCE THE GREATBAY ASSIGNMENT
-  // WE HAD THIS WORKING
-  // COPY READ UNDERSTAND PASTE
+  console.log(`\n\nINITIALIZING Add Product...\n\n`)
 
-}
+  inquirer.prompt([{
+      type: "input",
+      message: "ENTER the Product NAME...",
+      name: "name"
+    },
+    {
+      type: "input",
+      message: "ENTER the Product PRICE...",
+      name: "price"
+    },
+    {
+      type: "list",
+      message: "ENTER the Product DEPARTMENT...",
+      name: "department",
+      choices: ["Home and Bath", "Electronics", "Clothing"]
+    },
+    {
+      type: "input",
+      message: "ENTER the Product STOCK...",
+      name: "stock"
+    }
+  ]).then(function (res) {
+
+    let name = res.name;
+    let price = res.price;
+    let department = res.department;
+    let initStock = res.stock;
+    createItems(name, department, price, initStock);
+
+  });
+};
 
 function exitTerminal() {
   console.log(`\n\nHave a good day, way to manage people...\n\n`)
@@ -248,7 +275,23 @@ function restock(productName, stock, product_ID) {
         managerTerminal();
         // console.log(`Total Sale: $${productPrice*product_amount}`);
         // console.log(`${res.affectedRows} products updated!\n`);
-      }
-    )
-  })
+      });
+  });
+};
+
+function createItems(name, department, price, initStock) {
+  console.log(`\n\nAdding Product to the Damazon Store...`);
+  connection.query(`INSERT INTO products SET ?`, {
+
+      product_name: name,
+      department_name: department,
+      price: price,
+      stock_quantity: initStock
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(`${res.affectedRows} product added.\n\n`)
+      managerTerminal();
+    }
+  )
 }
