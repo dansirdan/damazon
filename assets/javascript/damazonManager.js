@@ -7,11 +7,11 @@ const chalk = require("chalk");
 const log = console.log;
 
 const connection = mysql.createConnection({
-  host: "localhost",
+  host: keys.sql.host,
   port: 3306,
-  user: "root",
-  password: "root",
-  database: "damazon_db"
+  user: keys.sql.user,
+  password: keys.sql.password,
+  database: keys.sql.database
 });
 
 connection.connect(function (err) {
