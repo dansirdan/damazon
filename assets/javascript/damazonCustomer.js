@@ -1,11 +1,25 @@
+// CUSTOMER TERMINAL---------------------------------->
 const keys = require("./keys");
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const dot = require("dotenv").config();
 const Table = require("cli-table");
+
+// <NPM CHALK----------------------------------------->
+// and added usage of shorthand of the NPM...
+// makes it WAY easy to read console.log(chalk.yellow(`<text here>`));
+//                           log(y(`<text here>`));
+// also keeps my prints to screen readable in code...see below "DAMAZON"
 const chalk = require("chalk");
 const log = console.log;
+const y = chalk.yellow;
+const r = chalk.red;
+const g = chalk.green
+const c = chalk.cyan
+const b = chalk.blue
+const m = chalk.magenta
 
+// CONNECTION CONST----------------------------------->
 const connection = mysql.createConnection({
   host: keys.sql.host,
   port: 3306,
@@ -14,30 +28,29 @@ const connection = mysql.createConnection({
   database: keys.sql.database
 });
 
+// INITIALIZATION------------------------------------->
 connection.connect(function (err) {
 
   if (err) throw err;
-
-  log(`\n\n`);
-  log(chalk.yellowBright.italic("                          WELCOME TO...                        \n"));
-  log(chalk.yellow(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
-  log(chalk.green(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
-  log(chalk.cyan("██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║"));
-  log(chalk.blue("██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║"));
-  log(chalk.magenta("██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║"));
-  log(chalk.magenta("╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝"));
+  log(y(`\n                          WELCOME TO...                        \n`));
+  log(y(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
+  log(g(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
+  log(c(`██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║`));
+  log(b(`██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║`));
+  log(m(`██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║`));
+  log(m(`╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝`));
   log(`\n`);
-
   customerTerminal();
 
 });
 
+// UI DIRECTORY FOR CUSTOMER-------------------------->
 function customerTerminal() {
 
   inquirer.prompt([{
     name: "action",
     type: "list",
-    message: "How can I help you today...",
+    message: `${y("How may I assist you today...")}`,
     choices: [{
         key: 'a',
         name: `Shop Products by Department`,
@@ -45,7 +58,7 @@ function customerTerminal() {
       },
       {
         key: 'b',
-        name: "Shop Products by Sales - 'COMING SOON'",
+        name: `Shop Products by Sales - ${r("COMING SOON")}`,
         value: "s_pro_sales"
       },
       {
@@ -68,6 +81,7 @@ function customerTerminal() {
 
     let command = res.action;
 
+    // TERMINAL SWITCH FUNCTION...
     switch (command) {
       case "s_pro_dep":
         s_pro_dep();
@@ -88,17 +102,25 @@ function customerTerminal() {
   });
 };
 
+// SHOP PRODUCTS BY DEPARTMENT------------>
+// queries for all departments...
+// define a blank prompt array...
+// define a go_back button...
+// define in a for loop all departments as inquirer options...
+// push each to the prompt array...
+// run prompt with { key:__, name:__, choices: promptArr};
 function s_pro_dep() {
 
   connection.query(`SELECT * FROM departments`, function (err, res) {
 
     if (err) throw err;
 
-    let promptArr = [{
+    let promptArr = [];
+    let go_back = {
       key: `d`,
       name: `GO BACK`,
       value: 0
-    }];
+    };
 
     for (let i = 0; i < res.length; i++) {
 
@@ -116,31 +138,32 @@ function s_pro_dep() {
       promptArr.push(choice_object);
 
     };
+    promptArr.push(go_back);
 
     inquirer.prompt([{
 
       type: "list",
-      message: "Please SELECT the Product DEPARTMENT...",
+      message: `${y("Please SELECT the Product DEPARTMENT...")}`,
       name: "department",
       choices: promptArr
 
     }]).then(function (res) {
 
-      // log(res);
-
       if (res.department == 0) {
 
-        log(`\n\nReturning to Main Terminal...\n\n`);
+        log(y(`\n\nReturning to Main Terminal...\n\n`));
         customerTerminal();
         return;
 
       };
 
+      // JOIN QUERY------------------------------------->
+      // query an INNER JOIN for products in departments matching departments.department_name...
+      //                                                             products.department_name...
+      // REPEAT created method above of for looping what to buy into the choices prompt array...
       connection.query(`SELECT products.id, products.product_name, departments.department_id FROM products INNER JOIN departments ON departments.department_name = products.department_name WHERE department_id = ${res.department}`, function (err, res) {
 
         if (err) throw err;
-
-        // log(res);
 
         let promptArr = [];
 
@@ -156,15 +179,13 @@ function s_pro_dep() {
             value: `${product_ID}`
 
           };
-
           promptArr.push(choice_object);
-
         };
 
         inquirer.prompt([{
 
           type: `list`,
-          message: `What would you like to purchase...`,
+          message: `${y("What would you like to purchase...")}`,
           name: `product`,
           choices: promptArr
 
@@ -172,7 +193,6 @@ function s_pro_dep() {
 
           let pID = res.product;
           pick_amount(pID);
-          // log(pID);
 
         });
       });
@@ -180,13 +200,20 @@ function s_pro_dep() {
   });
 };
 
+// SHOP PRODUCTS BY SALES -- MOCK UP -- -- -- -- -- -- -->
 function s_pro_sales() {
+
+  log(r(`\n\nThis is a mock up of how a manager might set a sale on an item...\nCheck out my commented out code in the Customer.js File to see the pseudo code.`))
+  customerTerminal();
 
 };
 
+// VIEW ALL PRODUCTS------------------------------------->
+// LOOK AT THIS FANCY TABLE NPM!
+// Prints a BRILLIANT table to the terminal...
 function view_all() {
 
-  console.log(`\n\nPopulating all the products...\n`);
+  log(r(`\n\nPopulating all of the products...\n`));
 
   connection.query(`SELECT * FROM products`, function (err, res) {
 
@@ -244,16 +271,48 @@ function view_all() {
   });
 };
 
+// KAREN -- MANAGER FREE TOTE BAG if successful...
+// purely fun but does a confirm inquirer
+// Gives the user a free tote bag if a secret condition is met...
 function karen() {
 
-  log(`\n\nYou use the hidden ability of your beehive up-do to intimidate the manager...`);
-  log(`...`);
-  log(`Your intimidation fails...`);
-  log(`\n\nYou have been escorted off the premises...`);
-  connection.end();
+  log(`\n\n`);
+  log(r(`Calling the Manager now...please wait...`))
+  inquirer.prompt([{
 
+    type: "input",
+    message: `${(y("You hear the manager on the phone, 'Hello! What's your name..."))}`,
+    name: "karen"
+
+  }]).then(function (res) {
+
+    let hint = log(c("Karen"))
+
+    if (res.karen !== "Karen") {
+      log(r("\n\nYou use the hidden potential of your up-do to intimidate the manager over the phone."));
+      log(r(`The Manager reaches through the phone and yanks off wig, revealing you are not a real ${hint}...`));
+      log(r("Your intimidation fails..."));
+      log(r("\n\nThe Manager hangs up the phone..."));
+      connection.end()
+
+
+    } else {
+
+      log(y("\n\nYou use the hidden ability of your 'beehive up-do' to intimidate the manager over the phone..."));
+      log(y("..."));
+      log(y("The Manager begins to break down..."));
+      log(y("..."));
+      log(y("Your intimidation has succeeded. You received a FREE Tote Bag..."));
+
+      let product_amount = 0;
+      let product_id = 11;
+      makeSale(product_id, product_amount);
+
+    };
+  });
 };
 
+// EXIT TERMINAL
 function exitTerminal() {
 
   log(`\n\n"Thank you for shopping at 'Damazon'.\nWe hope to see you again!"\n\n`);
@@ -261,6 +320,7 @@ function exitTerminal() {
 
 };
 
+// PICK HOW MANY YOU WOULD LIKE TO BUY
 function pick_amount(pID) {
 
   let product_id = pID;
@@ -279,6 +339,7 @@ function pick_amount(pID) {
   });
 };
 
+// UPDATE PRODUCTS AND CALCULATE 
 function makeSale(product_id, product_amount) {
 
   log(chalk.green(`\n\nProcessing your sale...`));
@@ -298,27 +359,29 @@ function makeSale(product_id, product_amount) {
       customerTerminal();
 
     } else {
-      updateProducts(stock, product_amount, productPrice, product_id)
+      updateProducts(productPrice, product_amount, stock, product_id)
     }
   });
 };
 
-function updateProducts(stock, product_amount, productPrice, product_id) {
+// UPDATES THE PRODUCTS AND CREATES PRODUCT SALES info
+function updateProducts(productPrice, product_amount, stock, product_id) {
 
+
+  // UPDATE Table1
+  // SET Field1 = Table2.Field1,
+  //     Field2 = Table2.Field2,
+  //     other columns...
+  // FROM Table2
+  // WHERE Table1.ID = Table2.ID
+  let product_sales = productPrice * product_amount;
+  let new_stock = stock - product_amount;
   connection.query(
-    "UPDATE products SET ? WHERE ?",
-    [{
-        stock_quantity: stock - product_amount,
-        product_sales: productPrice * product_amount
-      },
-      {
-        id: product_id
-      }
-    ],
+    `UPDATE products SET products.stock_quantity = ${new_stock}, products.product_sales = ${product_sales} WHERE products.id = ${product_id}`,
     function (err, res) {
 
       if (err) throw err;
-      log(`Total Sale: $${productPrice*product_amount}`);
+      log(`Total Sale: $${product_sales}`);
       log(`${res.affectedRows} products updated!\n`);
 
       customerTerminal();

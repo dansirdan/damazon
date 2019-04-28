@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: keys.sql.host,
   port: 3306,
   user: keys.sql.user,
-  password: keys.spl.password,
+  password: keys.sql.password,
   database: keys.sql.database
 });
 
