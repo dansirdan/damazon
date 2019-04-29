@@ -1,11 +1,23 @@
+// MANAGER TERMINAL----------------------------------->
 const keys = require("./keys.js");
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const dot = require("dotenv").config();
+
+// <NPM cli-table------------------------------------->
 const Table = require("cli-table");
+
+// <NPM CHALK----------------------------------------->
 const chalk = require("chalk");
 const log = console.log;
+const y = chalk.yellow;
+const r = chalk.red;
+const g = chalk.green;
+const c = chalk.cyan;
+const b = chalk.blue;
+const m = chalk.magenta;
 
+// CONNECTION CONST----------------------------------->
 const connection = mysql.createConnection({
   host: keys.sql.host,
   port: 3306,
@@ -14,30 +26,29 @@ const connection = mysql.createConnection({
   database: keys.sql.database
 });
 
+// INITIALIZATION------------------------------------->
 connection.connect(function (err) {
 
   if (err) throw err;
-
-  log(`\n\n`);
-  log(chalk.yellowBright.italic("                       MANAGER MODE...                      \n"));
-  log(chalk.yellow(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
-  log(chalk.green(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
-  log(chalk.cyan("██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║"));
-  log(chalk.blue("██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║"));
-  log(chalk.magenta("██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║"));
-  log(chalk.magenta("╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝"));
+  log(y("\n                        MANAGER MODE...                        \n"));
+  log(y(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
+  log(g(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
+  log(c(`██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║`));
+  log(b(`██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║`));
+  log(m(`██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║`));
+  log(m(`╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝`));
   log(`\n`);
-
   managerTerminal();
 
 });
 
+// UI DIRECTORY FOR MANAGERS------------------------->
 function managerTerminal() {
 
   inquirer.prompt([{
     name: "action",
     type: "list",
-    message: "MANAGER MODE: What would you like to do?",
+    message: `${m('MANAGER MODE:')} ${y('What would you like to do?')}`,
     choices: [{
         key: 'a',
         name: "View Products for Sale",
@@ -204,7 +215,7 @@ function aPro() {
 
         key: `d${counter++}`,
         name: `${departmentName}`,
-        value: `${department_ID}`
+        value: `${departmentName}`
 
       };
 
@@ -402,7 +413,8 @@ function createItems(name, department, price, initStock) {
       product_name: name,
       department_name: department,
       price: price,
-      stock_quantity: initStock
+      stock_quantity: initStock,
+      product_sales: 0.00
 
     },
     function (err, res) {

@@ -3,6 +3,8 @@ const keys = require("./keys");
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const dot = require("dotenv").config();
+
+// <NPM cli-table------------------------------------->
 const Table = require("cli-table");
 
 // <NPM CHALK----------------------------------------->
@@ -14,10 +16,10 @@ const chalk = require("chalk");
 const log = console.log;
 const y = chalk.yellow;
 const r = chalk.red;
-const g = chalk.green
-const c = chalk.cyan
-const b = chalk.blue
-const m = chalk.magenta
+const g = chalk.green;
+const c = chalk.cyan;
+const b = chalk.blue;
+const m = chalk.magenta;
 
 // CONNECTION CONST----------------------------------->
 const connection = mysql.createConnection({

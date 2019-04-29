@@ -1,11 +1,23 @@
+// MANAGER TERMINAL----------------------------------->
 const keys = require("./keys.js");
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const dot = require("dotenv").config();
+
+// <NPM cli-table------------------------------------->
 const Table = require("cli-table");
+
+// <NPM CHALK----------------------------------------->
 const chalk = require("chalk");
 const log = console.log;
+const y = chalk.yellow;
+const r = chalk.red;
+const g = chalk.green;
+const c = chalk.cyan;
+const b = chalk.blue;
+const m = chalk.magenta;
 
+// CONNECTION CONST----------------------------------->
 const connection = mysql.createConnection({
   host: keys.sql.host,
   port: 3306,
@@ -14,30 +26,31 @@ const connection = mysql.createConnection({
   database: keys.sql.database
 });
 
+// INITIALIZATION------------------------------------->
 connection.connect(function (err) {
 
   if (err) throw err;
 
   log(`\n\n`);
-  log(chalk.yellowBright.italic("                       SUPERVISOR MODE...                      \n"));
-  log(chalk.yellow(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
-  log(chalk.green(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
-  log(chalk.cyan("██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║"));
-  log(chalk.blue("██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║"));
-  log(chalk.magenta("██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║"));
-  log(chalk.magenta("╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝"));
+  log(y("\n                       SUPERVISOR MODE...                      \n"));
+  log(y(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
+  log(g(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
+  log(c(`██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║`));
+  log(b(`██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║`));
+  log(m(`██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║`));
+  log(m(`╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝`));
   log(`\n`);
-
   supervisorTerminal();
 
 });
 
+// UI DIRECTORY FOR THE SUPERVISOr-------------------->
 function supervisorTerminal() {
 
   inquirer.prompt([{
     name: "action",
     type: "list",
-    message: "S_MODE: What would you like to do...",
+    message: `${m("S_MODE: ")}What would you like to do...`,
     choices: [{
         key: 'a',
         name: "View Profits by DEPARTMENT",
@@ -86,56 +99,71 @@ function v_pro_dep() {
 
     if (err) throw err;
 
-    // AUTOPOPULATES THE DEPARTMENTS INTO A CHOICE ARRAY
-    // GET PRECISE DEPARTMENT DATA
-    // PRINT ALL FUNCTION TO COME...
+    // // AUTOPOPULATES THE DEPARTMENTS INTO A CHOICE ARRAY
+    // // GET PRECISE DEPARTMENT DATA
+    // // PRINT ALL FUNCTION TO COME...
 
-    let promptArr = [{
-      key: `d`,
-      name: `GO BACK`,
-      value: 0
-    }];
+    // let promptArr = [{
+    //   key: `d`,
+    //   name: `GO BACK`,
+    //   value: `exit`
+    // }];
 
-    // PROMPT CHOICE OBJECT ARRAY FOR LOOP
-    for (let i = 0; i < res.length; i++) {
+    // // PROMPT CHOICE OBJECT ARRAY FOR LOOP
+    // for (let i = 0; i < res.length; i++) {
 
-      let departmentName = res[i].department_name;
-      let department_ID = res[i].department_id;
-      let counter = 0;
-      let choice_object = {
+    //   let d_id = res[i].department_id;
+    //   let departmentName = res[i].department_name;
+    //   let counter = 0;
+    //   let choice_object = {
 
-        key: `d${counter++}`,
-        name: `${departmentName}`,
-        value: `${department_ID}`
+    //     key: `d${counter++}`,
+    //     name: `${departmentName}`,
+    //     value: `${d_id}`
 
-      };
+    //   };
 
-      promptArr.push(choice_object);
+    //   promptArr.push(choice_object);
 
-    };
+    // };
 
-    inquirer.prompt([{
+    // inquirer.prompt([{
 
-      name: `pickItem`,
-      type: `list`,
-      message: `S_MODE: view by DEPARTMENT...`,
-      choices: promptArr
+    //   name: `pickItem`,
+    //   type: `list`,
+    //   message: `${m("S_MODE:")} View all ...`,
+    //   choices: [{
+    //     key: `a`,
+    //     name: `VIEW ALL`,
+    //     value: `view_all`
+    //   }, {
+    //     key: `b`,
+    //     name: `GO BACK`,
+    //     value: `exit`
+    //   }]
 
-    }]).then(function (res) {
+    // }]).then(function (res) {
 
-      let input_ID = res.pickItem;
+    //   let d_name = res.pickItem;
+    //   if (d_name === `exit`) {
 
-      if (input_ID == 0) {
+    //     log(`\n\nReturning to SUPERVISOR Terminal...\n\n`);
+    //     supervisorTerminal();
 
-        log(`\n\nReturning to SUPERVISOR Terminal...\n\n`);
-        supervisorTerminal();
-        return;
+    //   } else {
 
-      };
-
-      connection.query(`SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales FROM departments INNER JOIN products ON departments.department_id = ${input_ID}`, function (err, res) {
+    connection.query(`SELECT departments.department_name,
+                                 departments.over_head_costs,
+                          SUM(products.product_sales) AS total_sales,
+                          SUM(products.product_sales) - departments.over_head_costs AS total_profit
+                          FROM departments
+                          JOIN products USING(department_name)
+                          GROUP BY department_name`,
+      function (err, res) {
 
         if (err) throw err;
+
+        // log(res);
 
         let table = new Table({
 
@@ -159,21 +187,22 @@ function v_pro_dep() {
 
         });
 
-        table.push([`Department ID`, `Department NAME`, `Department Costs`, `Product Sales`, `Total Profit`])
+        table.push([`Department NAME`, `Department Costs`, `Product Sales`, `Total Profit`])
 
-        let dept_id = res[0].department_id;
-        let dName = res[0].department_name;
-        let dCost = res[0].over_head_costs;
-        let dSales = res[0].product_sales;
-        let tProfit = dSales - dCost;
+        for (let i = 0; i < res.length; i++) {
+          let dName = res[i].department_name;
+          let dCost = res[i].over_head_costs;
+          let tSales = res[i].total_sales;
+          let tProfit = res[i].total_profit;
 
-        if (tProfit < 0) {
-          tProfit = chalk.red(tProfit)
-        } else {
-          tProfit = chalk.green(tProfit)
+          if (tProfit < 0) {
+            tProfit = chalk.red(tProfit)
+          } else {
+            tProfit = chalk.green(tProfit)
+          }
+
+          table.push([`${dName}`, `${dCost}`, `${tSales}`, `${tProfit}`]);
         }
-
-        table.push([`${dept_id}`, `${dName}`, `${dCost}`, `${dSales}`, `${tProfit}`]);
 
         log(`\n`);
         log(table.toString());
@@ -182,7 +211,8 @@ function v_pro_dep() {
         supervisorTerminal();
 
       });
-    });
+    // }
+    // });
   });
 };
 
@@ -192,12 +222,12 @@ function aDep() {
 
   inquirer.prompt([{
       type: "input",
-      message: "ENTER the Department NAME...",
+      message: `${m("S_MODE: ")}ENTER the Department NAME...`,
       name: "name"
     },
     {
       type: "input",
-      message: "ENTER the Department OVER HEAD COSTS...",
+      message: `${m("S_MODE: ")}ENTER the Department OVER HEAD COSTS...`,
       name: "cost"
     }
   ]).then(function (res) {
