@@ -8,3 +8,61 @@ Red Dress         || ID: 7   || Price: $53       || Stock: 10
 Swim Trunks       || ID: 8   || Price: $34.99    || Stock: 7
 Green Dress       || ID: 9   || Price: $53       || Stock: 7
 Birthday Suit     || ID: 10  || Price: $800      || Stock: 8
+
+// connection.query(`SELECT * FROM departments`, function (err, res) {
+  //   if (err) throw err;
+ // // AUTOPOPULATES THE DEPARTMENTS INTO A CHOICE ARRAY
+    // // GET PRECISE DEPARTMENT DATA
+    // // PRINT ALL FUNCTION TO COME...
+
+    // let promptArr = [{
+    //   key: `d`,
+    //   name: `GO BACK`,
+    //   value: `exit`
+    // }];
+
+    // // PROMPT CHOICE OBJECT ARRAY FOR LOOP
+    // for (let i = 0; i < res.length; i++) {
+
+    //   let d_id = res[i].department_id;
+    //   let departmentName = res[i].department_name;
+    //   let counter = 0;
+    //   let choice_object = {
+
+    //     key: `d${counter++}`,
+    //     name: `${departmentName}`,
+    //     value: `${d_id}`
+
+    //   };
+
+    //   promptArr.push(choice_object);
+
+    // };
+
+    // inquirer.prompt([{
+
+    //   name: `pickItem`,
+    //   type: `list`,
+    //   message: `${m("S_MODE:")} View all ...`,
+    //   choices: [{
+    //     key: `a`,
+    //     name: `VIEW ALL`,
+    //     value: `view_all`
+    //   }, {
+    //     key: `b`,
+    //     name: `GO BACK`,
+    //     value: `exit`
+    //   }]
+
+    // }]).then(function (res) {
+
+    //   let d_name = res.pickItem;
+    //   if (d_name === `exit`) {
+
+    //     log(`\n\nReturning to SUPERVISOR Terminal...\n\n`);
+    //     supervisorTerminal();
+
+    //   } else {
+        // }
+  // });
+  // });

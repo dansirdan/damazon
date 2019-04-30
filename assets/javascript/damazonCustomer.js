@@ -10,7 +10,7 @@ const Table = require("cli-table");
 // <NPM CHALK----------------------------------------->
 // and added usage of shorthand of the NPM...
 // makes it WAY easy to read console.log(chalk.yellow(`<text here>`));
-//                           log(y(`<text here>`));
+//                                   log(y(`<text here>`));
 // also keeps my prints to screen readable in code...see below "DAMAZON"
 const chalk = require("chalk");
 const log = console.log;
@@ -20,6 +20,7 @@ const g = chalk.green;
 const c = chalk.cyan;
 const b = chalk.blue;
 const m = chalk.magenta;
+let greeting = 0;
 
 // CONNECTION CONST----------------------------------->
 const connection = mysql.createConnection({
@@ -49,10 +50,19 @@ connection.connect(function (err) {
 // UI DIRECTORY FOR CUSTOMER-------------------------->
 function customerTerminal() {
 
+  let greet_message;
+  if (greeting === 0) {
+    greet_message = `${m("Hello, I'm VIC...your Virtual Interactive Clerk.")}\nHow may I assist you today...`
+    greeting++;
+  } else {
+    greet_message = `${m("VIC: ")}How may I assist you...`
+  }
+  log(`\n\n`);
+
   inquirer.prompt([{
     name: "action",
     type: "list",
-    message: `${y("How may I assist you today...")}`,
+    message: greet_message,
     choices: [{
         key: 'a',
         name: `Shop Products by Department`,
@@ -145,7 +155,7 @@ function s_pro_dep() {
     inquirer.prompt([{
 
       type: "list",
-      message: `${y("Please SELECT the Product DEPARTMENT...")}`,
+      message: `${m("VIC: ")}Please select the department you wish to shop from...`,
       name: "department",
       choices: promptArr
 
@@ -153,7 +163,8 @@ function s_pro_dep() {
 
       if (res.department == 0) {
 
-        log(y(`\n\nReturning to Main Terminal...\n\n`));
+        log(`\n\n`);
+        log(r(`Returning to Main Terminal...`));
         customerTerminal();
         return;
 
@@ -163,41 +174,64 @@ function s_pro_dep() {
       // query an INNER JOIN for products in departments matching departments.department_name...
       //                                                             products.department_name...
       // REPEAT created method above of for looping what to buy into the choices prompt array...
-      connection.query(`SELECT products.id, products.product_name, departments.department_id FROM products INNER JOIN departments ON departments.department_name = products.department_name WHERE department_id = ${res.department}`, function (err, res) {
+      connection.query(`SELECT products.id, 
+                               products.product_name,
+                               departments.department_id
+                        FROM products
+                        INNER JOIN departments
+                        ON departments.department_name = products.department_name
+                        WHERE department_id = ${res.department}`,
+        function (err, res) {
 
-        if (err) throw err;
+          if (err) throw err;
 
-        let promptArr = [];
-
-        for (let i = 0; i < res.length; i++) {
-
-          let productName = res[i].product_name;
-          let product_ID = res[i].id;
-          let counter = 0;
-          let choice_object = {
-
-            key: `p${counter++}`,
-            name: `${productName}`,
-            value: `${product_ID}`
-
+          let promptArr = [];
+          let go_back = {
+            key: `d`,
+            name: `GO BACK`,
+            value: 0
           };
-          promptArr.push(choice_object);
-        };
 
-        inquirer.prompt([{
+          for (let i = 0; i < res.length; i++) {
 
-          type: `list`,
-          message: `${y("What would you like to purchase...")}`,
-          name: `product`,
-          choices: promptArr
+            let productName = res[i].product_name;
+            let product_ID = res[i].id;
+            let counter = 0;
+            let choice_object = {
 
-        }]).then(function (res) {
+              key: `p${counter++}`,
+              name: `${productName}`,
+              value: `${product_ID}`
 
-          let pID = res.product;
-          pick_amount(pID);
+            };
+            promptArr.push(choice_object);
+          };
+          promptArr.push(go_back);
 
+          if (res.department == 0) {
+
+            log(`\n\n`);
+            log(r(`Returning to Main Terminal...`));
+            customerTerminal();
+            return;
+
+          } else {
+
+            inquirer.prompt([{
+
+              type: `list`,
+              message: `${m("VIC: ")}What would you like to purchase...`,
+              name: `product`,
+              choices: promptArr
+
+            }]).then(function (res) {
+
+              let pID = res.product;
+              pick_amount(pID);
+
+            });
+          }
         });
-      });
     });
   });
 };
@@ -205,7 +239,9 @@ function s_pro_dep() {
 // SHOP PRODUCTS BY SALES -- MOCK UP -- -- -- -- -- -- -->
 function s_pro_sales() {
 
-  log(r(`\n\nThis is a mock up of how a manager might set a sale on an item...\nCheck out my commented out code in the Customer.js File to see the pseudo code.`))
+  log(`\n\n`);
+  log(r(`This is a mock up of how a manager might set a sale on an item...`));
+  log(r(`Check out my commented out code in the Customer.js File to see the pseudo code.`))
   customerTerminal();
 
 };
@@ -215,7 +251,8 @@ function s_pro_sales() {
 // Prints a BRILLIANT table to the terminal...
 function view_all() {
 
-  log(r(`\n\nPopulating all of the products...\n`));
+  log(`\n\n`);
+  log(y(`Populating all products...`));
 
   connection.query(`SELECT * FROM products`, function (err, res) {
 
@@ -266,8 +303,6 @@ function view_all() {
 
     log(`\n`);
     log(table.toString());
-    log(`\n`);
-
     customerTerminal();
 
   });
@@ -278,21 +313,22 @@ function view_all() {
 // Gives the user a free tote bag if a secret condition is met...
 function karen() {
 
-  log(`\n\n`);
   log(r(`Calling the Manager now...please wait...`))
   inquirer.prompt([{
 
     type: "input",
-    message: `${(y("You hear the manager on the phone, 'Hello! What's your name..."))}`,
+    message: `${(y("You hear the manager on the phone, 'Hello! What's your name?"))}`,
     name: "karen"
 
   }]).then(function (res) {
 
-    let hint = log(c("Karen"))
+    let hint = c("Karen");
 
     if (res.karen !== "Karen") {
-      log(r("\n\nYou use the hidden potential of your up-do to intimidate the manager over the phone."));
-      log(r(`The Manager reaches through the phone and yanks off wig, revealing you are not a real ${hint}...`));
+
+      log(`\n`);
+      log(r("You use your fake 'beehive up-do' to intimidate the manager over the phone..."));
+      log(r(`The Manager reaches through the phone and yanks off your wig, revealing that you are not a real ${hint}...`));
       log(r("Your intimidation fails..."));
       log(r("\n\nThe Manager hangs up the phone..."));
       connection.end()
@@ -300,11 +336,12 @@ function karen() {
 
     } else {
 
-      log(y("\n\nYou use the hidden ability of your 'beehive up-do' to intimidate the manager over the phone..."));
-      log(y("..."));
+      log(`\n`);
+      log(y("You use the hidden ability of your 'beehive up-do' to intimidate the manager over the phone..."));
       log(y("The Manager begins to break down..."));
       log(y("..."));
-      log(y("Your intimidation has succeeded. You received a FREE Tote Bag..."));
+      log(y("Your intimidation has succeeded."));
+      log(g("You received a FREE Tote Bag..."));
 
       let product_amount = 0;
       let product_id = 11;
@@ -317,7 +354,8 @@ function karen() {
 // EXIT TERMINAL
 function exitTerminal() {
 
-  log(`\n\n"Thank you for shopping at 'Damazon'.\nWe hope to see you again!"\n\n`);
+  log(`\n\n`);
+  log(`${m("VIC: ")}Thank you for shopping at 'Damazon'.\nWe hope to see you again!`);
   connection.end();
 
 };
@@ -328,23 +366,38 @@ function pick_amount(pID) {
   let product_id = pID;
 
   inquirer.prompt([{
+      type: "input",
+      message: `${m("VIC: ")}How many would you like to buy?`,
+      name: "amount"
+    },
+    {
+      type: "confirm",
+      message: `\n\n${m("VIC: ")}Are you sure...`,
+      name: "check"
+    }
+  ]).then(function (res) {
 
-    type: "input",
-    message: `How many would you like to buy?`,
-    name: "amount"
+    if (res.check === false) {
 
-  }]).then(function (res) {
+      log(`\n\n`);
+      log(r(`Returning to Main Terminal...`));
+      customerTerminal();
+      return;
 
-    let product_amount = res.amount;
-    makeSale(product_id, product_amount);
+    } else {
 
+      let product_amount = res.amount;
+      makeSale(product_id, product_amount);
+
+    };
   });
 };
 
-// UPDATE PRODUCTS AND CALCULATE 
+// MAKE SALE FUNCTION 
 function makeSale(product_id, product_amount) {
 
-  log(chalk.green(`\n\nProcessing your sale...`));
+  log(`\n\n`);
+  log(g(`Processing your sale...`));
 
   connection.query(`SELECT * FROM products WHERE id = ${product_id}`, function (err, res) {
 
@@ -356,8 +409,9 @@ function makeSale(product_id, product_amount) {
 
     if (stock <= 0) {
 
-      log(`\n\nUnfortunately, we are out of ${productName}\n\n`)
-      log(`Please search another Product ID...`)
+      log(`\n\n`);
+      log(r(`Unfortunately, we are out of ${productName}.`))
+      log(r(`Please search another Product ID...`))
       customerTerminal();
 
     } else {
@@ -369,22 +423,25 @@ function makeSale(product_id, product_amount) {
 // UPDATES THE PRODUCTS AND CREATES PRODUCT SALES info
 function updateProducts(productPrice, product_amount, stock, product_id) {
 
-
   // UPDATE Table1
   // SET Field1 = Table2.Field1,
   //     Field2 = Table2.Field2,
   //     other columns...
   // FROM Table2
   // WHERE Table1.ID = Table2.ID
+
   let product_sales = productPrice * product_amount;
   let new_stock = stock - product_amount;
+
   connection.query(
-    `UPDATE products SET products.stock_quantity = ${new_stock}, products.product_sales = ${product_sales} WHERE products.id = ${product_id}`,
+    `UPDATE products
+     SET products.stock_quantity = ${new_stock}, products.product_sales = ${product_sales}
+     WHERE products.id = ${product_id}`,
     function (err, res) {
 
       if (err) throw err;
-      log(`Total Sale: $${product_sales}`);
-      log(`${res.affectedRows} products updated!\n`);
+
+      log(g(`Total Sale: $${product_sales}`));
 
       customerTerminal();
 

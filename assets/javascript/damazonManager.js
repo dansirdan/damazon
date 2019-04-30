@@ -45,13 +45,15 @@ connection.connect(function (err) {
 // UI DIRECTORY FOR MANAGERS------------------------->
 function managerTerminal() {
 
+  log(`\n\n`);
+
   inquirer.prompt([{
     name: "action",
     type: "list",
-    message: `${m('MANAGER MODE:')} ${y('What would you like to do?')}`,
+    message: `${m('M_MODE: ')}What would you like to do?`,
     choices: [{
         key: 'a',
-        name: "View Products for Sale",
+        name: "View all Products",
         value: "vPro"
       },
       {
@@ -61,7 +63,7 @@ function managerTerminal() {
       },
       {
         key: 'c',
-        name: "Add New Product",
+        name: "Add new Product",
         value: "aPro"
       },
       {
@@ -89,12 +91,12 @@ function managerTerminal() {
         break
     };
   });
-
 };
 
+// VIEW ALL PRODUCTS-------------------------------->
 function vPro() {
 
-  log(`\n\nAccessing Product Data...`);
+  log(`Accessing Product Data...`);
 
   connection.query(`SELECT * FROM products`, function (err, res) {
 
@@ -156,8 +158,6 @@ function vPro() {
 
     log(`\n`);
     log(table.toString());
-    log(`\n`);
-
     managerTerminal();
 
   });
@@ -168,15 +168,15 @@ function aInv() {
   inquirer.prompt([{
     name: "add_action",
     type: "list",
-    message: "Initializing ADD ITEM command...",
+    message: `${m('M_MODE: ')}Initializing ADD INVENTORY...`,
     choices: [{
         key: "y",
-        name: "ADD ITEM by ID Number...",
+        name: `ADD INVENTORY by ${y("PRODUCT ID Number")}...`,
         value: "search"
       },
       {
         key: "z",
-        name: "ADD ITEM by suggested population...",
+        name: `ADD INVENTORY by ${y("LOW STOCK")}...`,
         value: "suggest"
       }
     ]
@@ -193,12 +193,17 @@ function aInv() {
         break;
     };
   });
-
 };
 
+// ADD NEW PRODUCT CHOICES PULLED FROM DEPARTMENTS----->
+// query to create an array of choice objects
+// all dept. names
+// query >> prompt{queryChoiceArray} >> query
 function aPro() {
 
-  log(chalk.red(`\n\nINITIALIZING Add Product...\n\n`));
+  log(`\n\n`);
+  log(y(`INITIALIZING Add Product...`));
+  log(`\n\n`);
 
   connection.query(`SELECT * FROM departments`, function (err, res) {
 
@@ -209,7 +214,6 @@ function aPro() {
     for (let i = 0; i < res.length; i++) {
 
       let departmentName = res[i].department_name;
-      let department_ID = res[i].department_id;
       let counter = 0;
       let choice_object = {
 
@@ -225,23 +229,23 @@ function aPro() {
 
     inquirer.prompt([{
         type: "input",
-        message: "ENTER the Product NAME...",
+        message: `${m("M_MODE: ")}ENTER the Product NAME...`,
         name: "name"
       },
       {
         type: "input",
-        message: "ENTER the Product PRICE...",
+        message: `${m("M_MODE: ")}ENTER the Product PRICE...`,
         name: "price"
       },
       {
         type: "list",
-        message: "ENTER the Product DEPARTMENT...",
+        message: `${m("M_MODE: ")}ENTER the Product DEPARTMENT...`,
         name: "department",
         choices: promptArr
       },
       {
         type: "input",
-        message: "ENTER the Product STOCK...",
+        message: `${m("M_MODE: ")}ENTER the Product STOCK...`,
         name: "stock"
       }
     ]).then(function (res) {
@@ -256,14 +260,20 @@ function aPro() {
   });
 };
 
+// EXIT MANAGER TERMINAL && END CONNECTION---------->
 function exitTerminal() {
-
-  log(`\n\nWHO'S A GOOD MANAGER?\nYou are....\n\n`);
+  log(`\n\n`);
+  log(m(`WHO'S A GOOD MANAGER...you are. Nice work today.`));
+  log(`\n`);
   connection.end();
-
 };
 
+// UPDATE INVENTORY BY PRODUCT ID----------------->
 function search_by_id() {
+
+  log(`\n\n`);
+  log(y(`INITIALIZING Update Inventory...`));
+  log(`\n\n`);
 
   inquirer.prompt([{
 
@@ -286,7 +296,13 @@ function search_by_id() {
   });
 };
 
+// UPDATE INVENTORY BASED OFF LOW STOCK---------->
+// just something extra, more practical
 function suggested() {
+
+  log(`\n\n`);
+  log(y(`INITIALIZING Update Inventory...`));
+  log(`\n\n`);
 
   connection.query(`SELECT * FROM products WHERE stock_quantity <= 9`, function (err, res) {
 
@@ -311,16 +327,14 @@ function suggested() {
         value: `${product_ID}`
 
       };
-
       promptArr.push(choice_object);
-
     };
 
     inquirer.prompt([{
 
       name: `pickItem`,
       type: `list`,
-      message: `M_MODE: Suggested restock items...`,
+      message: `${m("M_MODE: ")}Products by ${y("LOW STOCK")}...`,
       choices: promptArr
 
     }]).then(function (res) {
@@ -329,7 +343,8 @@ function suggested() {
 
       if (input_ID == 0) {
 
-        log(`\n\nReturning to Main Terminal...\n\n`);
+        log(`\n\n`);
+        log(y(`Returning to Main Terminal...`));
         managerTerminal();
         return;
 
@@ -349,13 +364,18 @@ function suggested() {
   });
 };
 
+// RESTOCK FUNCTION TO CHOOSE AMOUNT----------->
 function restock(productName, stock, product_ID) {
+
+  log(`\n\n`);
+  log(y(`FINALIZING Update Inventory...`));
+  log(`\n\n`);
 
   inquirer.prompt([{
 
     name: "amount",
     type: "list",
-    message: `MANAGER MODE: how many ${productName}(s) would you like to restock...`,
+    message: `${m("MANAGER MODE: ")}How many ${productName}(s) would you like to restock...`,
     choices: [{
         key: 'l',
         name: "1",
@@ -396,17 +416,21 @@ function restock(productName, stock, product_ID) {
 
         if (err) throw err;
 
-        log(chalk.green(`\n\n${productName} restocked...`));
-        log(chalk.green(`TOTAL STOCK: ${stock + amount}\n\n`));
+        log(`\n\n`);
+        log(g(`${productName} restocked...`));
+        log(g(`TOTAL STOCK: ${stock + amount}`));
         managerTerminal();
 
       });
   });
 };
 
+// CREATE NEW PRODUCT------------------------------>
 function createItems(name, department, price, initStock) {
 
-  log("\n\n" + chalk.green("ADDING_PRODUCT") + " to the Damazon Store...");
+  // log("\n\n" + chalk.green("ADDING_PRODUCT") + " to the Damazon Store...");
+  log(`\n\n`);
+  log(y(`ADDING ${name} to DAMAZON STORE...`))
 
   connection.query(`INSERT INTO products SET ?`, {
 
@@ -421,7 +445,7 @@ function createItems(name, department, price, initStock) {
 
       if (err) throw err;
 
-      log(chalk.green(`${name} product added.\n\n`));
+      log(g(`${name} ADDED...`));
       managerTerminal();
 
     });
