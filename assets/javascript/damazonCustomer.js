@@ -35,13 +35,13 @@ const connection = mysql.createConnection({
 connection.connect(function (err) {
 
   if (err) throw err;
-  log(y(`\n                          WELCOME TO...                        \n`));
-  log(y(`██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
-  log(g(`██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
-  log(c(`██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║`));
-  log(b(`██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║`));
-  log(m(`██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║`));
-  log(m(`╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝`));
+  log(y(`\n                             WELCOME TO...                        \n`));
+  log(y(`   ██████╗  █████╗ ███╗   ███╗ █████╗ ███████╗  ██████╗ ███╗   ██╗`));
+  log(g(`   ██╔══██╗██╔══██╗████╗ ████║██╔══██╗╚══███╔╝ ██╔═══██╗████╗  ██║`));
+  log(c(`   ██║  ██║███████║██╔████╔██║███████║  ███╔╝  ██║   ██║██╔██╗ ██║`));
+  log(b(`   ██║  ██║██╔══██║██║╚██╔╝██║██╔══██║ ███╔╝   ██║   ██║██║╚██╗██║`));
+  log(m(`   ██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗ ╚██████╔╝██║ ╚████║`));
+  log(m(`   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝  ╚═════╝ ╚═╝  ╚═══╝`));
   log(`\n`);
   customerTerminal();
 
@@ -407,10 +407,11 @@ function makeSale(product_id, product_amount) {
     let productName = res[0].product_name;
     let productPrice = res[0].price;
 
-    if (stock <= 0) {
+    if (stock - product_amount < 0) {
 
       log(`\n\n`);
-      log(r(`Unfortunately, we are out of ${productName}.`))
+      log(r(`Stock Amount: ${stock}`))
+      log(r(`Unfortunately, we are either out of ${productName} or we do not have enough to complete your order.`))
       log(r(`Please search another Product ID...`))
       customerTerminal();
 
