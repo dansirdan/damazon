@@ -1,8 +1,11 @@
 # Mock_Online_Shopping_Store
 
 version 1.0
-Video Demo: https://drive.google.com/file/d/1DsE0EwRi--HxGP0N_AuJzCpqtltB-F1Z/view
-The world's smallest and longest gif...
+Video Demo:
+https://drive.google.com/file/d/1DsE0EwRi--HxGP0N_AuJzCpqtltB-F1Z/view
+
+The world's smallest and longest gif
+
 <img src="./assets/media/damgif.gif">
 
 ## NPM Packages Used
